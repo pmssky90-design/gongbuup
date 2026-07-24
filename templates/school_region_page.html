@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="{{language}}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{title}}</title>
+  <meta name="description" content="{{description}}">
+  <link rel="canonical" href="{{canonical}}">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="{{title}}">
+  <meta property="og:description" content="{{description}}">
+  <meta property="og:url" content="{{canonical}}">
+{{og_image_meta}}
+  <link rel="stylesheet" href="/assets/site.css">
+{{preload_image}}
+</head>
+<body>
+  <header class="site-header">
+    <a href="/">공부업</a>
+    <nav aria-label="주요 탐색">
+      <a href="/과외/지역찾기/">지역</a>
+      <a href="/과외/과목찾기/">과목</a>
+      <a href="/과외/학년찾기/">학년</a>
+      <a href="/과외/학교찾기/">학교</a>
+    </nav>
+  </header>
+  <main>
+    <article>
+      <h1>{{keyword}}</h1>
+{{image_blocks}}
+      <div class="content">{{body_html}}</div>
+    </article>
+    <aside class="related" aria-label="관련 페이지">
+      <h2>관련 학습 페이지</h2>
+      <ul>
+{{internal_links}}
+      </ul>
+    </aside>
+  </main>
+  <footer><a href="/">홈으로</a></footer>
+</body>
+</html>

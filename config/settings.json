@@ -1,0 +1,105 @@
+{
+  "site_name": "공부업",
+  "site_url": "https://example.local",
+  "language": "ko",
+  "preview_port": "auto",
+  "output_dir": "candidate_output",
+  "page_category": "과외",
+  "max_width": 720,
+  "background_color": "#111",
+  "image_dir": "assets/im",
+  "location_image_dir": "assets/location",
+  "thumbnail_dir": "assets/thumbnail",
+  "content_generation": {
+    "mode": "sentence_pool",
+    "seed_mode": "slug",
+    "use_csv_content_when_present": false,
+    "description_sentence_count": 4,
+    "body_sentence_count": 7,
+    "keyword_insert_count": 3,
+    "max_similarity_share": 0.7,
+    "max_retry": 20,
+    "title_min_length": 40,
+    "title_target_length": 55,
+    "title_max_length": 68
+  },
+  "keyword_combinations": {
+    "enabled": true,
+    "source": "data/keyword_profiles/keyword_combinations.xlsx",
+    "generate_base_tutoring": true,
+    "generate_subject_only": true,
+    "generate_grade_only": true,
+    "generate_grade_subject": true,
+    "generate_internal_exam_only": true,
+    "generate_subject_internal_exam": true,
+    "generate_grade_internal_exam": true,
+    "generate_grade_subject_internal_exam": true,
+    "forbid_elementary_internal_exam": true,
+    "require_title_terms_in_body": true,
+    "require_title_terms_in_description": true,
+    "max_keyword_occurrences_in_title": 1,
+    "max_keyword_occurrences_in_body": 2,
+    "max_keyword_occurrences_in_description": 1,
+    "use_fixed_slug_seed": true
+  },
+  "production": {
+    "enabled": true,
+    "output_directory": "site",
+    "keep_backup": false,
+    "delete_output_before_build": true,
+    "verify_after_build": true,
+    "preview_after_build": false,
+    "create_archive": false
+  },
+  "school_region_generation": {
+    "subjects": ["수학", "영어", "국어", "과학", "영수"],
+    "elementary_subjects": ["수학", "영어"],
+    "enable_elementary_korean": false,
+    "enable_elementary_science": false,
+    "school_page_subjects": ["수학", "영어", "국어", "과학"],
+    "school_directory_page_size": 50,
+    "sitemap_max_urls": 50000,
+    "sample_region_count": 10,
+    "sample_middle_school_count": 10,
+    "sample_high_school_count": 10,
+    "sample_page_limit": 300,
+    "internal_link_min": 10,
+    "internal_link_max": 30,
+    "html_target_min_bytes": 20480,
+    "html_target_max_bytes": 51200,
+    "html_hard_max_bytes": 81920,
+    "generation_order": [
+      "navigation",
+      "region",
+      "subject",
+      "grade",
+      "school",
+      "directory"
+    ],
+    "enabled_generation_phases": [
+      "navigation",
+      "region",
+      "subject",
+      "grade",
+      "school",
+      "directory"
+    ],
+    "separate_sitemaps_by_page_family": true
+    ,
+    "enable_similarity_resistant_body": true,
+    "priority1_blocker_variant_file": "config/priority1_blocker_variants.json",
+    "quality_review": {
+      "candidate_directory": "candidate_output/school_region_quality_review",
+      "similarity_sample_limit_per_group": 80,
+      "similarity_max_pairs_per_bucket": 200,
+      "rewrite_sample_limit": 300,
+      "sitemap_grouping": "index_priority",
+      "production_modes": [
+        "production-priority-1",
+        "production-priority-1-2",
+        "production-priority-1-3",
+        "production-all"
+      ]
+    }
+  }
+}

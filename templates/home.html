@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="{{language}}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{site_name}} 후보 사이트</title>
+  <meta name="description" content="{{site_name}} 개발용 후보 사이트의 생성 페이지 목록입니다.">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="canonical" href="{{site_url}}/">
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; background: {{background_color}}; color: #eee; font-family: Arial, "Malgun Gothic", sans-serif; }
+    main { width: calc(100% - 32px); max-width: {{max_width}}px; margin: 40px auto; padding: 28px; border-radius: 12px; background: #1c1c1c; }
+    h1 { margin-top: 0; }
+    a { color: #8fc7ff; }
+    li { margin: 10px 0; }
+    .notice { color: #f0c674; }
+    @media (max-width: 720px) { main { width: 100%; margin: 0; border-radius: 0; padding: 22px 18px; } }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>{{site_name}}</h1>
+    <p class="notice">개발용 후보 사이트입니다.</p>
+    <p>전체 생성 페이지 수: {{page_count}}</p>
+    <p>현재 site_url: {{site_url}}</p>
+    <ul>
+{{page_links}}
+    </ul>
+  </main>
+</body>
+</html>

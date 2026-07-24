@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://example.local/sitemap_index.xml

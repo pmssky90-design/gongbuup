@@ -1,0 +1,17 @@
+preview/
+backup/
+reports/
+logs/
+candidate_output/
+candidate_output_*/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.log
+*.tmp
+.DS_Store
+Thumbs.db
+.git_broken_*/
+data/full_keyword_combinations.csv
+data/partial_*/
+data/superseded_*/
