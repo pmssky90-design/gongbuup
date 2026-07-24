@@ -3,5 +3,8 @@
   <sitemap><loc>https://example.local/sitemap-navigation-001.xml</loc></sitemap>
   <sitemap><loc>https://example.local/sitemap-region-001.xml</loc></sitemap>
   <sitemap><loc>https://example.local/sitemap-subject-001.xml</loc></sitemap>
+  <sitemap><loc>https://example.local/sitemap-grade-001.xml</loc></sitemap>
+  <sitemap><loc>https://example.local/sitemap-school-001.xml</loc></sitemap>
   <sitemap><loc>https://example.local/sitemap-directory-001.xml</loc></sitemap>
+  <sitemap><loc>https://example.local/sitemap-navigation-repair-001.xml</loc></sitemap>
 </sitemapindex>

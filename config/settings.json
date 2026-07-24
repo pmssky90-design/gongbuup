@@ -52,6 +52,9 @@
     "create_archive": false
   },
   "school_region_generation": {
+    "school_name_corrections": {
+      "이화여자대학교사범대학부속이화?금란중학교": "이화여자대학교사범대학부속이화·금란중학교"
+    },
     "subjects": ["수학", "영어", "국어", "과학", "영수"],
     "elementary_subjects": ["수학", "영어"],
     "enable_elementary_korean": false,
@@ -88,6 +91,7 @@
     ,
     "enable_similarity_resistant_body": true,
     "priority1_blocker_variant_file": "config/priority1_blocker_variants.json",
+    "production_full_repair_variant_file": "config/production_full_repair_variants.json",
     "quality_review": {
       "candidate_directory": "candidate_output/school_region_quality_review",
       "similarity_sample_limit_per_group": 80,

@@ -11,7 +11,7 @@ import shutil
 import sys
 import time
 import unicodedata
-from collections import Counter, defaultdict
+from collections import Counter, defaultdict, deque
 from datetime import datetime
 from pathlib import Path
 from urllib.parse import quote, unquote, urlsplit
@@ -85,6 +85,15 @@ def choose_preview_dir() -> Path:
 def read_excel(path: Path) -> tuple[
     list[dict[str, object]], list[dict[str, object]], list[dict[str, object]], dict[str, int]
 ]:
+    settings = json.loads(SETTINGS_PATH.read_text(encoding="utf-8-sig"))
+    corrections = {
+        str(source): str(target)
+        for source, target in dict(
+            settings.get("school_region_generation", {}).get(
+                "school_name_corrections", {}
+            )
+        ).items()
+    }
     workbook = load_workbook(path, read_only=True, data_only=True)
     required_sheets = {"지역별 학교", "지역 요약", "미매칭 지역"}
     missing = required_sheets - set(workbook.sheetnames)
@@ -107,7 +116,10 @@ def read_excel(path: Path) -> tuple[
     counters = Counter()
     for source_row, raw in enumerate(raw_links, start=2):
         region = clean(raw.get("지역명"))
-        school = clean(raw.get("학교명"))
+        source_school = clean(raw.get("학교명"))
+        school = corrections.get(source_school, source_school)
+        if school != source_school:
+            counters["school_name_corrected"] += 1
         grade = clean(raw.get("학교급"))
         if not region or not school:
             counters["empty"] += 1
@@ -615,6 +627,18 @@ def plan_pages(
                 if value is not None:
                     plan["similarity_variant"] = int(value)
                     plan["blocker_variant"] = True
+    repair_variant_file = config.get("production_full_repair_variant_file")
+    if repair_variant_file:
+        repair_variant_path = ROOT / str(repair_variant_file)
+        if repair_variant_path.is_file():
+            repair_variants = json.loads(
+                repair_variant_path.read_text(encoding="utf-8-sig")
+            )
+            for plan in plans:
+                value = repair_variants.get(str(plan["slug"]))
+                if value is not None:
+                    plan["similarity_variant"] = int(value)
+                    plan["blocker_variant"] = True
     counts = Counter(str(plan["slug"]) for plan in plans)
     duplicate_slugs = {slug for slug, count in counts.items() if count > 1}
     if duplicate_slugs:
@@ -881,6 +905,11 @@ def generate_preview(
             return int(image.width), int(image.height)
 
     sample_by_slug = {str(plan["slug"]): plan for plan in sample}
+    global_fallback_slugs = [str(plan["slug"]) for plan in sample[:60]]
+    dimension_cache = {
+        path: image_dimensions(path)
+        for path in ([common] if common else []) + thumbnails
+    }
     region_slugs: dict[str, list[str]] = defaultdict(list)
     school_slugs: dict[str, list[str]] = defaultdict(list)
     for plan in sample:
@@ -929,10 +958,7 @@ def generate_preview(
                 slugs[0] for name, slugs in school_slugs.items()
                 if schools[name]["학교급"] == plan["학교급"]
             )
-        link_candidates.extend(
-            str(other["slug"]) for other in sample
-            if other["slug"] != plan["slug"]
-        )
+        link_candidates.extend(global_fallback_slugs)
         internal_links: list[str] = []
         for slug in link_candidates:
             if slug != plan["slug"] and slug not in internal_links:
@@ -947,7 +973,7 @@ def generate_preview(
         image_blocks: list[str] = []
         preload = ""
         if common_url:
-            common_width, common_height = image_dimensions(common)
+            common_width, common_height = dimension_cache[common]
             image_blocks.append(
                 f'    <figure><img src="{common_url}" width="{common_width}" '
                 f'height="{common_height}" loading="eager" decoding="async" '
@@ -958,7 +984,7 @@ def generate_preview(
         if thumbnails:
             selected = thumbnails[stable_int(str(plan["slug"])) % len(thumbnails)]
             thumbnail_url = copy_asset(selected, str(settings["thumbnail_dir"]))
-            thumb_width, thumb_height = image_dimensions(selected)
+            thumb_width, thumb_height = dimension_cache[selected]
             image_blocks.append(
                 f'    <figure><img src="{thumbnail_url}" width="{thumb_width}" '
                 f'height="{thumb_height}" loading="lazy" decoding="async" '
@@ -1316,10 +1342,7 @@ def validate_preview(
             if parsed.scheme or parsed.netloc:
                 continue
             path = parsed.path
-            target = output / Path(unquote(path).lstrip("/").replace("/", "\\"))
-            if path.endswith("/"):
-                target /= "index.html"
-            if not target.exists():
+            if path not in page_paths:
                 broken_links.append(f"{html_file}: {href}")
             if path in page_paths and path != source_url:
                 incoming[path] += 1
@@ -1351,9 +1374,9 @@ def validate_preview(
         count > maximum_links for count in internal_link_counts.values()
     )
     depths = {"/": 0}
-    queue = ["/"]
+    queue = deque(["/"])
     while queue:
-        current = queue.pop(0)
+        current = queue.popleft()
         for target in graph.get(current, set()):
             if target not in depths:
                 depths[target] = depths[current] + 1
